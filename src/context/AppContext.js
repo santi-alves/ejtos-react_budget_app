@@ -28,6 +28,7 @@ export const AppReducer = (state, action) => {
           ...state,
         };
       }
+
     case "RED_EXPENSE":
       const red_expenses = state.expenses.map((currentExp) => {
         if (
@@ -44,6 +45,7 @@ export const AppReducer = (state, action) => {
         ...state,
         expenses: [...red_expenses],
       };
+
     case "DELETE_EXPENSE":
       action.type = "DONE";
       state.expenses.map((currentExp) => {
@@ -58,6 +60,7 @@ export const AppReducer = (state, action) => {
         ...state,
         budget,
       };
+
     case "SET_BUDGET":
       action.type = "DONE";
       state.budget = action.payload;
@@ -65,6 +68,14 @@ export const AppReducer = (state, action) => {
       return {
         ...state,
       };
+
+    case "INVALID_BUDGET":
+      action.type = "DONE";
+      alert("You cannot reduce the budget value lower than the spending");
+      return {
+        ...state,
+      };
+
     case "CHG_CURRENCY":
       action.type = "DONE";
       state.currency = action.payload;
@@ -79,7 +90,7 @@ export const AppReducer = (state, action) => {
 
 // 1. Sets the initial state when the app loads
 const initialState = {
-  budget: 2000,
+  budget: 20000,
   expenses: [
     { id: "Marketing", name: "Marketing", cost: 50 },
     { id: "Finance", name: "Finance", cost: 300 },
@@ -87,7 +98,7 @@ const initialState = {
     { id: "Human Resource", name: "Human Resource", cost: 40 },
     { id: "IT", name: "IT", cost: 500 },
   ],
-  currency: "£",
+  currency: { name: "Euro", symbol: "€" },
 };
 
 // 2. Creates the context this is the thing our components import and use to get the state
@@ -99,11 +110,13 @@ export const AppProvider = (props) => {
   // 4. Sets up the app state. takes a reducer, and an initial state
   const [state, dispatch] = useReducer(AppReducer, initialState);
   let remaining = 0;
+  let totalExpenses = 0;
 
   if (state.expenses) {
-    const totalExpenses = state.expenses.reduce((total, item) => {
+    totalExpenses = state.expenses.reduce((total, item) => {
       return (total = total + item.cost);
     }, 0);
+
     remaining = state.budget - totalExpenses;
   }
 
@@ -111,6 +124,7 @@ export const AppProvider = (props) => {
     <AppContext.Provider
       value={{
         expenses: state.expenses,
+        totalExpenses: totalExpenses,
         budget: state.budget,
         remaining: remaining,
         dispatch,

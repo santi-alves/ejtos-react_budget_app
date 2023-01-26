@@ -1,0 +1,13 @@
+.currency-select {
+    background-color: lightgreen; 
+    color: white;
+}
+
+.currency-option {
+  color: black;  
+}
+
+.currency-option:hover {
+    background-color: white;
+    color: black;
+}
